@@ -70,3 +70,13 @@ def sign_up(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "peer/sign-up.html")
+
+
+@login_required
+def upload(request):
+    return render(request, "peer/upload.html")
+
+
+@login_required
+def download(request):
+    return render(request, "peer/download.html")
