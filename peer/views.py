@@ -6,7 +6,9 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
-from .models import User
+import os
+
+from .models import User, UserProfile
 
 
 @login_required(login_url="/login/")
@@ -74,9 +76,39 @@ def sign_up(request):
 
 @login_required
 def upload(request):
-    return render(request, "peer/upload.html")
+    profile = UserProfile.objects.filter(user=request.user).first()
+    files = []
+    if profile and profile.default_directory:
+        try:
+            files = os.listdir(profile.default_directory)
+        except FileNotFoundError:
+            files = []
+
+    if request.method == "POST":
+        selected_file = request.POST.get("file")
+        # Handle logic here
+
+    return render(request, "peer/upload.html", {"files": files})
 
 
 @login_required
 def download(request):
     return render(request, "peer/download.html")
+
+
+@login_required
+def set_default_directory(request):
+    if request.method == "POST":
+        directory = request.POST.get("default-directory")
+        profile, created = UserProfile.objects.get_or_create(user=request.user)
+        profile.default_directory = directory
+        profile.save()
+
+    profile = UserProfile.objects.filter(user=request.user).first()
+    current_directory = profile.default_directory if profile else None
+
+    return render(
+        request,
+        "peer/set-default-directory.html",
+        {"current_directory": current_directory},
+    )

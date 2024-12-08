@@ -8,5 +8,10 @@ urlpatterns = [
     path("logout/", views.logout_view, name="logout"),
     path("sign-up/", views.sign_up, name="sign-up"),
     path("upload/", views.upload, name="upload"),
-    path("download", views.download, name="download"),
+    path("download/", views.download, name="download"),
+    path(
+        "set-default-directory/",
+        views.set_default_directory,
+        name="set-default-directory",
+    ),
 ]
