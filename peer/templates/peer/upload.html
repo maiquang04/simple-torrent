@@ -10,6 +10,8 @@ Upload
 <h1>Upload file</h1>
 
 {% if user.userprofile.default_directory %}
+<p>Your current default directory is: {{current_directory }}</p>
+
 <form action="{% url 'upload' %}" method="post">
     {% csrf_token %}
     <div class="form-group">

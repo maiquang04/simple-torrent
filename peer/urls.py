@@ -14,4 +14,5 @@ urlpatterns = [
         views.set_default_directory,
         name="set-default-directory",
     ),
+    path("file-transfer/", views.file_transfer, name="file-transfer"),
 ]

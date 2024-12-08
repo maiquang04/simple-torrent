@@ -1,0 +1,36 @@
+{% extends "peer/layout.html" %}
+
+{% load static %}
+
+{% block extra_js %}
+<script src="{% static 'peer/js/file-transfer.js' %}"></script>
+{% endblock %}
+
+{% block title %}
+File Transfer
+{% endblock %}
+
+{% block body %}
+
+<h1>File Transfer</h1>
+
+<div>
+    <label for="peer-id">Your Peer ID:</label>
+    <span id="peer-id"></span>
+</div>
+<div>
+    <label for="remote-peer-id">Connect to Peer ID:</label>
+    <input type="text" id="remote-peer-id" placeholder="Enter peer ID">
+    <button id="connect">Connect</button>
+</div>
+<div>
+    <label for="file-input">Select File:</label>
+    <input type="file" id="file-input">
+    <button id="send-file">Send File</button>
+</div>
+<div>
+    <h3>Received Files:</h3>
+    <ul id="received-files"></ul>
+</div>
+
+{% endblock %}

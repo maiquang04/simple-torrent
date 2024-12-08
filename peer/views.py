@@ -88,7 +88,11 @@ def upload(request):
         selected_file = request.POST.get("file")
         # Handle logic here
 
-    return render(request, "peer/upload.html", {"files": files})
+    return render(
+        request,
+        "peer/upload.html",
+        {"files": files, "current_directory": profile.default_directory},
+    )
 
 
 @login_required
@@ -112,3 +116,8 @@ def set_default_directory(request):
         "peer/set-default-directory.html",
         {"current_directory": current_directory},
     )
+
+
+@login_required
+def file_transfer(request):
+    return render(request, "peer/file-transfer.html")
