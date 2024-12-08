@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
-	const peer = new Peer();
+	const peerId = JSON.parse(document.getElementById("django-peer-id").textContent);
+	const peer = new Peer(peerId);
 	const fileInput = document.getElementById("file-input");
 	const receivedFiles = document.getElementById("received-files");
 	let conn;
@@ -7,6 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	// Display your Peer ID
 	peer.on("open", (id) => {
 		document.getElementById("peer-id").innerText = id;
+		console.log("My peer ID is: " + id);
 	});
 
 	// Handle incoming connections

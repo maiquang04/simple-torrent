@@ -120,4 +120,11 @@ def set_default_directory(request):
 
 @login_required
 def file_transfer(request):
-    return render(request, "peer/file-transfer.html")
+    profile = UserProfile.objects.get(user=request.user)
+
+    if not profile.peer_id:
+        profile.set_peer_id()
+        profile.save()
+
+    peer_id = profile.peer_id
+    return render(request, "peer/file-transfer.html", {"peer_id": peer_id})

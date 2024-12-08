@@ -15,8 +15,9 @@ File Transfer
 <h1>File Transfer</h1>
 
 <div>
-    <label for="peer-id">Your Peer ID:</label>
-    <span id="peer-id"></span>
+    <h6 for="peer-id">
+        Your Peer ID: <span id="peer-id"></span>
+    </h6>
 </div>
 <div>
     <label for="remote-peer-id">Connect to Peer ID:</label>
@@ -32,5 +33,7 @@ File Transfer
     <h3>Received Files:</h3>
     <ul id="received-files"></ul>
 </div>
+
+{{ peer_id|json_script:"django-peer-id" }}
 
 {% endblock %}
