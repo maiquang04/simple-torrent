@@ -12,6 +12,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" rel="stylesheet" integrity="QI8z31KmtR+tk1MYi0DfgxrjYgpTpLLol3bqZA/Q1Y8BvH+6k7/Huoj38gQOaCS7" crossorigin="anonymous">
     <!-- PeerJS -->
     <script src="https://cdn.jsdelivr.net/npm/peerjs@1.4.7/dist/peerjs.min.js"></script>
+    <!-- CryptoJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <!-- Global CSS-->
     <link rel="stylesheet" href="{% static 'peer/css/global.css' %}" />
     <!-- Additional CSS -->
@@ -39,6 +41,9 @@
                     </li>
                     <li class="ms-5 nav-item">
                         <a href="{% url 'file-transfer' %}" class="nav-brand">File Transfer</a>
+                    </li>
+                    <li class="ms-5 nav-item">
+                        <a href="{% url 'file-slicer-and-merger' %}" class="nav-brand">File Slicer And Merger</a>
                     </li>
                     {% endif %}
                 </ul>

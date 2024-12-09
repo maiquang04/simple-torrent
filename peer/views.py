@@ -128,3 +128,15 @@ def file_transfer(request):
 
     peer_id = profile.peer_id
     return render(request, "peer/file-transfer.html", {"peer_id": peer_id})
+
+
+@login_required
+def file_slicer_and_merger(request):
+    profile = UserProfile.objects.filter(user=request.user).first()
+    current_directory = profile.default_directory if profile else None
+
+    return render(
+        request,
+        "peer/file-slicer-and-merger.html",
+        {"current_directory": current_directory},
+    )

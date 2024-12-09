@@ -15,4 +15,9 @@ urlpatterns = [
         name="set-default-directory",
     ),
     path("file-transfer/", views.file_transfer, name="file-transfer"),
+    path(
+        "file-slicer-and-merger",
+        views.file_slicer_and_merger,
+        name="file-slicer-and-merger",
+    ),
 ]
