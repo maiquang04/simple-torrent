@@ -12,11 +12,21 @@ import os
 import json
 
 from .models import User, UserProfile
+from . import tracker_utils
 
 
-@login_required(login_url="/login/")
+@login_required(login_url="/login")
 def index(request):
-    profile = UserProfile.objects.get(user=request.user)
+    try:
+        # Try to fetch the user profile
+        profile = UserProfile.objects.get(user=request.user)
+    except UserProfile.DoesNotExist:
+        # Handle the case where UserProfile doesn't exist
+        # Create a new UserProfile and set the peer_id using the set_peer_id method
+        profile = UserProfile.objects.create(user=request.user)
+        profile.set_peer_id()
+        profile.save()  # Save the newly created profile
+
     current_directory = profile.default_directory if profile else None
     peer_id = profile.peer_id
 
@@ -160,7 +170,19 @@ def upload_torrent(request):
             # Parse JSON body
             data = json.loads(request.body)
             torrent_data = data.get("torrent_data")
-            print(torrent_data)
+
+            # Check if torrent_data is a string, and parse it if necessary
+            if isinstance(torrent_data, str):
+                torrent_data = json.loads(torrent_data)
+
+            print(
+                "Torrent data", torrent_data
+            )  # For debugging, you can print torrent_data to see its structure
+
+            # Pass the torrent_data to the tracker utility to store it in the DB
+            torrent = tracker_utils.store_torrent_data(torrent_data)
+            print("Torrent", torrent)
+
             return JsonResponse({"success": True}, status=200)
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON"}, status=400)
