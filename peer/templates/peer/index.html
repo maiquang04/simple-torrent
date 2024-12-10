@@ -11,7 +11,7 @@
         <tr>
             <th scope="col">#</th>
             <th scope="col">Name</th>
-            <th scope="col">Files</th>
+            <th scope="col">Pieces</th>
             <th scope="col">Info Hash</th>
             <th scope="col">Uploaded</th>
             <th scope="col">Size</th>
@@ -22,48 +22,22 @@
         </tr>
     </thead>
     <tbody>
+        {% for torrent in torrents %}
         <tr>
-            <th scope="row">1</th>
-            <td>Conan</td>
-            <td>2</td>
-            <td>09CDF2FB11167298A4D12DF08307A378FC289EE7</td>
-            <td>2024/07/12 21:31</td>
-            <td>19 Mib</td>
-            <td>2</td>
-            <td>2</td>
-            <td>thomas</td>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>{{ torrent.name }}</td>
+            <td>{{ torrent.pieces.count }}</td>
+            <td>{{ torrent.info_hash }}</td>
+            <td>{{ torrent.created_at|date:"Y/m/d H:i" }}</td>
+            <td>{{ torrent.file_length|filesizeformat }}</td>
+            <td>{{ torrent.seeders }}</td>
+            <td>{{ torrent.leechers }}</td>
+            <td>{{ torrent.uploaded_by.user.username }}</td>
             <td>
                 <a href="#"><i class="fa-solid fa-download"></i></a>
             </td>
         </tr>
-        <tr>
-            <th scope="row">1</th>
-            <td>Conan</td>
-            <td>2</td>
-            <td>09CDF2FB11167298A4D12DF08307A378FC289EE7</td>
-            <td>2024/07/12 21:31</td>
-            <td>19 Mib</td>
-            <td>2</td>
-            <td>2</td>
-            <td>thomas</td>
-            <td>
-                <a href="#"><i class="fa-solid fa-download"></i></a>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row">1</th>
-            <td>Conan</td>
-            <td>2</td>
-            <td>09CDF2FB11167298A4D12DF08307A378FC289EE7</td>
-            <td>2024/07/12 21:31</td>
-            <td>19 Mib</td>
-            <td>2</td>
-            <td>2</td>
-            <td>thomas</td>
-            <td>
-                <a href="#"><i class="fa-solid fa-download"></i></a>
-            </td>
-        </tr>
+        {% endfor %}
     </tbody>
 </table>
 {% endblock %}

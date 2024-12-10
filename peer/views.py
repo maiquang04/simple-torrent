@@ -11,7 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 import os
 import json
 
-from .models import User, UserProfile
+from .models import User, UserProfile, Torrent
 from . import tracker_utils
 
 
@@ -30,10 +30,17 @@ def index(request):
     current_directory = profile.default_directory if profile else None
     peer_id = profile.peer_id
 
+    # Fetch all torrents from the database, ordered by created_at in descending order
+    torrents = Torrent.objects.all().order_by("-created_at")
+
     return render(
         request,
         "peer/index.html",
-        {"current_directory": current_directory, "peer_id": peer_id},
+        {
+            "current_directory": current_directory,
+            "peer_id": peer_id,
+            "torrents": torrents,
+        },
     )
 
 
