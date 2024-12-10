@@ -1,19 +1,30 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+
 
 import os
+import json
 
 from .models import User, UserProfile
 
 
 @login_required(login_url="/login/")
 def index(request):
-    return render(request, "peer/index.html")
+    profile = UserProfile.objects.get(user=request.user)
+    current_directory = profile.default_directory if profile else None
+    peer_id = profile.peer_id
+
+    return render(
+        request,
+        "peer/index.html",
+        {"current_directory": current_directory, "peer_id": peer_id},
+    )
 
 
 def login_view(request):
@@ -140,3 +151,18 @@ def file_slicer_and_merger(request):
         "peer/file-slicer-and-merger.html",
         {"current_directory": current_directory},
     )
+
+
+@csrf_exempt
+def upload_torrent(request):
+    if request.method == "POST":
+        try:
+            # Parse JSON body
+            data = json.loads(request.body)
+            torrent_data = data.get("torrent_data")
+            print(torrent_data)
+            return JsonResponse({"success": True}, status=200)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+    return JsonResponse({"error": "Invalid request method"}, status=405)
