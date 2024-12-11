@@ -34,7 +34,7 @@
             <td>{{ torrent.leechers }}</td>
             <td>{{ torrent.uploaded_by.user.username }}</td>
             <td>
-                <a href="#"><i class="fa-solid fa-download"></i></a>
+                <a href="{% url 'download-torrent' torrent.id %}"><i class="fa-solid fa-download"></i></a>
             </td>
         </tr>
         {% endfor %}

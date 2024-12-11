@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
@@ -10,9 +10,11 @@ from django.views.decorators.csrf import csrf_exempt
 
 import os
 import json
+import bencodepy
 
-from .models import User, UserProfile, Torrent
+from .models import User, UserProfile, Torrent, Piece, UserTorrent
 from . import tracker_utils
+from .configs import CONFIGS
 
 
 @login_required(login_url="/login")
@@ -201,3 +203,52 @@ def upload_torrent(request):
             return JsonResponse({"error": "Invalid JSON"}, status=400)
 
     return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+@login_required
+def download_torrent(request, torrent_id):
+    torrent = get_object_or_404(Torrent, pk=torrent_id)
+
+    # Retrieve the UserTorrent object by matching torrent and uploaded_by user
+    user_torrent = get_object_or_404(
+        UserTorrent, torrent=torrent, user=torrent.uploaded_by
+    )
+
+    # Fetch pieces for this torrent
+    pieces = Piece.objects.filter(torrent=torrent)
+
+    # The user who uploaded the torrent
+    user_profile = torrent.uploaded_by
+
+    # Create the torrent data dictionary
+    torrent_data = {
+        "announce": f'{CONFIGS["TRACKER_URL"]}/announce',
+        "creation date": int(torrent.created_at.timestamp()),
+        "info": {
+            "length": torrent.file_length,
+            "name": torrent.name,
+            "piece length": torrent.piece_length,
+            "pieces": [piece.hash_value.encode() for piece in pieces],
+        },
+        "user": {
+            "current directory": user_torrent.current_directory,
+            "file path": user_torrent.file_path,
+            "peer id": user_profile.peer_id,
+        },
+    }
+
+    # Encode the torrent data to bencode format
+    bencoded_data = bencodepy.encode(torrent_data)
+
+    # Create the torrent filename
+    torrent_filename = f"{torrent.name}.torrent"
+
+    # Prepare the response with the torrrent file
+    response = HttpResponse(
+        bencoded_data, content_type="application/x-bittorrent"
+    )
+    response["Content-Disposition"] = (
+        f'attachment; filename="{torrent_filename}"'
+    )
+
+    return response

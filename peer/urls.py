@@ -21,4 +21,9 @@ urlpatterns = [
         name="file-slicer-and-merger",
     ),
     path("upload-torrent", views.upload_torrent, name="upload-torrent"),
+    path(
+        "download-torrent/<int:torrent_id>",
+        views.download_torrent,
+        name="download-torrent",
+    ),
 ]
