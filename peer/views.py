@@ -252,3 +252,14 @@ def download_torrent(request, torrent_id):
     )
 
     return response
+
+
+@csrf_exempt
+def get_peer_list(request):
+
+    return JsonResponse({"success": True})
+
+
+@csrf_exempt
+def seed_file(request):
+    return JsonResponse({"success": True})

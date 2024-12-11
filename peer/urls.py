@@ -26,4 +26,6 @@ urlpatterns = [
         views.download_torrent,
         name="download-torrent",
     ),
+    path("get-peer-list", views.get_peer_list, name="get-peer-list"),
+    path("seed-file", views.seed_file, name="seed-file"),
 ]
