@@ -297,9 +297,9 @@ def get_peer_list(request):
             for user_torrent in user_torrents:
                 user_profile = user_torrent.user
                 peer_data = {
-                    "peer id": user_profile.peer_id,  # Get the peer ID from UserProfile
-                    "current directory": user_torrent.current_directory,
-                    "file path": user_torrent.file_path,
+                    "peer_id": user_profile.peer_id,  # Get the peer ID from UserProfile
+                    "file_directory": user_torrent.current_directory,
+                    "file_path": user_torrent.file_path,
                 }
                 peer_list.append(peer_data)
 
