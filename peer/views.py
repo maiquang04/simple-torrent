@@ -6,11 +6,14 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+from django.utils.timezone import make_aware
+from django.utils import timezone as django_timezone
 
 
 import os
 import json
 import bencodepy
+from datetime import datetime, timezone
 
 from .models import User, UserProfile, Torrent, Piece, UserTorrent
 from . import tracker_utils
@@ -257,20 +260,57 @@ def download_torrent(request, torrent_id):
 @csrf_exempt
 def get_peer_list(request):
     if request.method == "POST":
-        # Simulate peer list data
-        peer_list = [
-            {
-                "current directory": "current_dir_1",
-                "peer id": "peer_id_1",
-                "file path": "file_path_1",
-            },
-            {
-                "current directory": "current_dir_2",
-                "peer id": "peer_id_2",
-                "file path": "file_path_2",
-            },
-        ]
-        return JsonResponse({"success": True, "peers": peer_list}, status=200)
+        try:
+            # Assuming the client sends the torrent data as JSON in the body of the request
+            data = json.loads(request.body)
+
+            # Extract torrent info from the request body
+            info_name = data["info"].get(
+                "name"
+            )  # Assuming info_name is inside 'info' field
+            info_length = data["info"].get("length")  # Extract file length
+            user_peer_id = data["user"].get(
+                "peer id"
+            )  # Assuming user peer id is also sent in the request
+
+            # print("File name:", info_name)
+            # print("File length:", info_length)
+            # print("User peer id:", user_peer_id)
+
+            # Find the torrent matching the given criteria (name, file length, and user)
+            torrent = Torrent.objects.filter(
+                name=info_name,
+                file_length=info_length,
+                uploaded_by__peer_id=user_peer_id,
+            ).first()  # Assuming you only want the first match
+
+            # print("Torrent:", torrent)
+
+            if torrent is None:
+                return JsonResponse({"error": "Torrent not found"}, status=404)
+
+            # Get all UserTorrent entries related to this torrent
+            user_torrents = UserTorrent.objects.filter(torrent=torrent)
+
+            # Collect peer list from UserTorrent entries
+            peer_list = []
+            for user_torrent in user_torrents:
+                user_profile = user_torrent.user
+                peer_data = {
+                    "peer id": user_profile.peer_id,  # Get the peer ID from UserProfile
+                    "current directory": user_torrent.current_directory,
+                    "file path": user_torrent.file_path,
+                }
+                peer_list.append(peer_data)
+
+            return JsonResponse(
+                {"success": True, "peers": peer_list}, status=200
+            )
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
 
     # If method is not POST, return a 405 Method Not Allowed
     return JsonResponse({"error": "Method Not Allowed"}, status=405)
