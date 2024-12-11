@@ -28,7 +28,7 @@
             <td>{{ torrent.name }}</td>
             <td>{{ torrent.pieces.count }}</td>
             <td>{{ torrent.info_hash }}</td>
-            <td>{{ torrent.created_at|date:"H:i d/m/Y" }}</td>
+            <td>{{ torrent.created_at|date:"H:i:s d/m/Y" }}</td>
             <td>{{ torrent.file_length|filesizeformat }}</td>
             <td>{{ torrent.seeders }}</td>
             <td>{{ torrent.leechers }}</td>

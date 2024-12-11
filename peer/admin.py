@@ -20,6 +20,7 @@ class TorrentAdmin(admin.ModelAdmin):
         "uploaded_by",
         "seeders",
         "leechers",
+        "created_at",
     )
     search_fields = ("name", "info_hash", "uploaded_by__user__username")
     list_filter = ("created_at",)

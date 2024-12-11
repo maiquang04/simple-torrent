@@ -190,7 +190,13 @@ def upload_torrent(request):
             torrent = tracker_utils.store_torrent_data(torrent_data)
             print("Torrent", torrent)
 
-            return JsonResponse({"success": True}, status=200)
+            # Get the creation date and convert it to a Unix timestamp
+            creation_date = int(torrent.created_at.timestamp())
+            print("Torrent creation date:", creation_date)
+
+            return JsonResponse(
+                {"success": True, "creation date": creation_date}, status=200
+            )
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON"}, status=400)
 
