@@ -256,8 +256,24 @@ def download_torrent(request, torrent_id):
 
 @csrf_exempt
 def get_peer_list(request):
+    if request.method == "POST":
+        # Simulate peer list data
+        peer_list = [
+            {
+                "current directory": "current_dir_1",
+                "peer id": "peer_id_1",
+                "file path": "file_path_1",
+            },
+            {
+                "current directory": "current_dir_2",
+                "peer id": "peer_id_2",
+                "file path": "file_path_2",
+            },
+        ]
+        return JsonResponse({"success": True, "peers": peer_list}, status=200)
 
-    return JsonResponse({"success": True})
+    # If method is not POST, return a 405 Method Not Allowed
+    return JsonResponse({"error": "Method Not Allowed"}, status=405)
 
 
 @csrf_exempt
